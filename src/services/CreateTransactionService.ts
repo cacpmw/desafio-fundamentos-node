@@ -8,8 +8,17 @@ class CreateTransactionService {
     this.transactionsRepository = transactionsRepository;
   }
 
-  public execute(): Transaction {
-    // TODO
+  public execute(data: {
+    title: string;
+    value: number;
+    type: 'income' | 'outcome';
+  }): Transaction {
+    const { total } = this.transactionsRepository.getBalance();
+    if (data.type === 'outcome' && total < data.value) {
+      throw Error('Invalid operation');
+    }
+    const transaction = this.transactionsRepository.create(data);
+    return transaction;
   }
 }
 
